@@ -178,6 +178,59 @@ ll_insert index value node
         cur = 0;
       }
     }
-    return longest;
+    return std::max(cur, longest);
   }
 -}
+
+-- b
+longest_run :: [Bool] -> Int
+longest_run runs = fst (foldl longest (0, 0) runs)
+  where
+    longest accum True = (max (fst accum) (snd accum + 1), snd accum + 1)
+    longest accum False = (fst accum, 0)
+
+-- c
+{-
+  #import <vector>
+  #import <stack> 
+  using namespace std;
+
+  int maxTreeValue(Tree* t) {
+    if (t == nullptr) {
+      return 0;
+    }
+    
+    stack<Tree*> stack;
+    int maxSeen = t->value;
+    stack.push(t);
+    
+    while(!stack.empty()) {
+      Tree* cur = stack.top();
+      stack.pop();
+      maxSeen = max(maxSeen, (int) cur->value);
+      for (Tree* child : cur->children) {
+        stack.push(child);
+      }
+    }
+    
+    return maxSeen;
+  }
+-}
+
+-- d
+data Tree = Empty | Node Integer [Tree]
+
+max_tree_value :: Tree -> Integer
+max_tree_value Empty = 0
+max_tree_value (Node value nexts) = foldl max value [max_tree_value next | next <- nexts]
+
+-- Q9
+fibonacci :: Int -> [Int]
+fibonacci (-1) = []
+fibonacci 1 = [1]
+fibonacci 2 = [1, 1]
+fibonacci n = if n <= 0 then [] else reverse ((fst rfib + snd rfib) : rfib)
+  where 
+    rfib = reverse (fibonacci (n-1))
+    fst (x:xs) = x
+    snd (_:x:xs) = x 
