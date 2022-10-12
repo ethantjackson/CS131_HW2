@@ -234,3 +234,25 @@ fibonacci n = if n <= 0 then [] else reverse ((fst rfib + snd rfib) : rfib)
     rfib = reverse (fibonacci (n-1))
     fst (x:xs) = x
     snd (_:x:xs) = x 
+
+-- Q10
+data Event = Travel Integer | Fight Integer | Heal Integer
+
+super_giuseppe :: [Event] -> Integer
+super_giuseppe events = fst(foldl process_event (100, False) events)
+  where
+    process_event (-1, defense_mode) _ = (-1, defense_mode)
+    process_event (health, False) (Travel _) = (health, False)
+    process_event (health, True) (Travel distance) = 
+      let new_health = health + div distance 4
+      in (new_health, new_health <= 40)
+    process_event (health, defense_mode) (Fight damage) = 
+      let new_health = health - damage
+      in if new_health <= 0
+        then (-1, defense_mode)
+        else (new_health, new_health <= 40)
+    process_event (health, defense_mode) (Heal heal) =
+      let new_health = health + heal
+      in if new_health >= 100
+        then (100, False)
+        else (new_health, new_health <= 40)
